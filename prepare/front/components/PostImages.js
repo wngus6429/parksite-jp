@@ -66,7 +66,7 @@ const PostImages = ({ images }) => {
           <PlusOutlined />
           <br />
           {images.length - 1}
-          개의 사진 더 보기
+          個の写真 もっと見る
         </div>
       </div>
       {showImagesZoom && <ImagesZoom images={images} onClose={onClose} />}
