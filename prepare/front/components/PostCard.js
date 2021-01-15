@@ -23,16 +23,16 @@ import {
 } from "../reducers/post";
 import FollowButton from "./FollowButton";
 
-moment.locale("ja"); //한글로 바꿔줌
+moment.locale("ja");
 
 const PostCard = ({ post }) => {
   const dispatch = useDispatch();
   const { removePostLoading } = useSelector((state) => state.post);
   const [commentFormOpened, setcommentFormOpened] = useState(false);
   const id = useSelector((state) => state.user.me?.id);
+  const [editMode, setEditMode] = useState(false);
   //me.id가 있으면 그 데이터가 들어가고 없으면 undefined
   //옵셔널 체이닝 연산자라고 한다. optional chaining
-  const [editMode, setEditMode] = useState(false);
   const onClickUpdate = useCallback(() => {
     setEditMode(true);
   }, []);
@@ -141,13 +141,11 @@ const PostCard = ({ post }) => {
                 </Link>
               }
               title={post.Retweet.User.nickname}
-              // description={post.content}
               description={
                 <PostCardContent
-                  editMode={editMode}
-                  onCancelUpdate={onCancelUpdate}
-                  onChangePost={onChangePost}
                   postData={post.Retweet.content}
+                  onChangePost={onChangePost}
+                  onCancelUpdate={onCancelUpdate}
                 />
               }
             />
@@ -167,8 +165,9 @@ const PostCard = ({ post }) => {
               title={post.User.nickname}
               description={
                 <PostCardContent
-                  onCancelUpdate={onCancelUpdate}
+                  editMode={editMode}
                   onChangePost={onChangePost}
+                  onCancelUpdate={onCancelUpdate}
                   postData={post.content}
                 />
               }

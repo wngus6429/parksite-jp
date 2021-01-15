@@ -295,10 +295,13 @@ router.delete("/:postId/like", isLoggedIn, async (req, res, next) => {
 });
 //Patch /post
 router.patch("/:postId", isLoggedIn, async (req, res, next) => {
+  // PATCH /post/10
   const hashtags = req.body.content.match(/#[^\s#]+/g);
   try {
     await Post.update(
-      { content: req.body.content },
+      {
+        content: req.body.content,
+      },
       {
         where: {
           id: req.params.postId,
@@ -314,7 +317,7 @@ router.patch("/:postId", isLoggedIn, async (req, res, next) => {
             where: { name: tag.slice(1).toLowerCase() },
           })
         )
-      );
+      ); // [[노드, true], [리액트, true]]
       await post.setHashtags(result.map((v) => v[0])); //setHashtags로 기존껄 대체 한다
     }
     res.status(200).json({ PostId: parseInt(req.params.postId, 10), content: req.body.content });
@@ -323,7 +326,6 @@ router.patch("/:postId", isLoggedIn, async (req, res, next) => {
     next(error);
   }
 });
-
 //DELETE /post
 router.delete("/:postId", isLoggedIn, async (req, res, next) => {
   try {
