@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback } from "react";
 import PropTypes from "prop-types";
 import { useDispatch, useSelector } from "react-redux";
 import { Button, Card, Popover, Avatar, List, Comment } from "antd";
@@ -19,6 +19,7 @@ import {
   REMOVE_POST_REQUEST,
   UNLIKE_POST_REQUEST,
   RETWEET_REQUEST,
+  UPDATE_POST_REQUEST,
 } from "../reducers/post";
 import FollowButton from "./FollowButton";
 
@@ -26,11 +27,30 @@ moment.locale("ja"); //한글로 바꿔줌
 
 const PostCard = ({ post }) => {
   const dispatch = useDispatch();
-  const { removePostLoading, retweetError } = useSelector((state) => state.post);
+  const { removePostLoading } = useSelector((state) => state.post);
   const [commentFormOpened, setcommentFormOpened] = useState(false);
   const id = useSelector((state) => state.user.me?.id);
   //me.id가 있으면 그 데이터가 들어가고 없으면 undefined
   //옵셔널 체이닝 연산자라고 한다. optional chaining
+  const [editMode, setEditMode] = useState(false);
+  const onClickUpdate = useCallback(() => {
+    setEditMode(true);
+  }, []);
+  const onCancelUpdate = useCallback(() => {
+    setEditMode(false);
+  }, []);
+  const onChangePost = useCallback(
+    (editText) => () => {
+      dispatch({
+        type: UPDATE_POST_REQUEST,
+        data: {
+          PostId: post.id,
+          content: editText,
+        },
+      });
+    },
+    [post]
+  );
 
   const onLike = useCallback(() => {
     if (!id) {
@@ -92,7 +112,7 @@ const PostCard = ({ post }) => {
               <Button.Group>
                 {id && post.User.id === id ? (
                   <>
-                    <Button>修正</Button>
+                    {!post.RetweetId && <Button onClick={onClickUpdate}>修正</Button>}
                     <Button type="danger" loading={removePostLoading} onClick={onRemovePost}>
                       削除
                     </Button>
@@ -114,7 +134,7 @@ const PostCard = ({ post }) => {
             <div style={{ float: "right" }}>{moment(post.createdAt).format("YYYY.MM.DD")}</div>
             <Card.Meta
               avatar={
-                <Link href={`/user/${post.Retweet.User.id}`}>
+                <Link href={`/user/${post.Retweet.User.id}`} prefetch={false}>
                   <a>
                     <Avatar>{post.Retweet.User.nickname[0]}</Avatar>
                   </a>
@@ -122,7 +142,14 @@ const PostCard = ({ post }) => {
               }
               title={post.Retweet.User.nickname}
               // description={post.content}
-              description={<PostCardContent postData={post.Retweet.content} />}
+              description={
+                <PostCardContent
+                  editMode={editMode}
+                  onCancelUpdate={onCancelUpdate}
+                  onChangePost={onChangePost}
+                  postData={post.Retweet.content}
+                />
+              }
             />
           </Card>
         ) : (
@@ -131,15 +158,20 @@ const PostCard = ({ post }) => {
             <Card.Meta
               avatar={
                 //아바타누르면 그 사람이 쓴 글 볼수 있게
-                <Link href={`/user/${post.User.id}`}>
+                <Link href={`/user/${post.User.id}`} prefetch={false}>
                   <a>
                     <Avatar>{post.User.nickname[0]}</Avatar>
                   </a>
                 </Link>
               }
               title={post.User.nickname}
-              // description={post.content}
-              description={<PostCardContent postData={post.content} />}
+              description={
+                <PostCardContent
+                  onCancelUpdate={onCancelUpdate}
+                  onChangePost={onChangePost}
+                  postData={post.content}
+                />
+              }
             />
           </>
         )}

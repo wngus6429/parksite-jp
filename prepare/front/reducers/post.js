@@ -25,6 +25,9 @@ export const initialState = {
   addPostLoading: false,
   addPostDone: false,
   addPostError: null,
+  updatePostLoading: false,
+  updatePostDone: false,
+  updatePostError: null,
   removePostLoading: false,
   removePostDone: false,
   removePostError: null,
@@ -70,6 +73,10 @@ export const LOAD_POSTS_FAILURE = "LOAD_POSTS_FAILURE";
 export const ADD_POST_REQUEST = "ADD_POST_REQUEST";
 export const ADD_POST_SUCCESS = "ADD_POST_SUCCESS";
 export const ADD_POST_FAILURE = "ADD_POST_FAILURE";
+
+export const UPDATE_POST_REQUEST = "UPDATE_POST_REQUEST";
+export const UPDATE_POST_SUCCESS = "UPDATE_POST_SUCCESS";
+export const UPDATE_POST_FAILURE = "UPDATE_POST_FAILURE";
 
 export const REMOVE_POST_REQUEST = "REMOVE_POST_REQUEST";
 export const REMOVE_POST_SUCCESS = "REMOVE_POST_SUCCESS";
@@ -213,6 +220,22 @@ const reducer = (state = initialState, action) =>
         draft.addPostLoading = false;
         draft.addPostError = action.error;
         break;
+
+      case UPDATE_POST_REQUEST:
+        draft.updatePostLoading = true;
+        draft.updatePostDone = false;
+        draft.updatePostError = null;
+        break;
+      case UPDATE_POST_SUCCESS:
+        draft.updatePostLoading = false;
+        draft.updatePostDone = true;
+        draft.mainPosts.find((v) => v.id === action.data.PostId).content = action.data.content;
+        break;
+      case UPDATE_POST_FAILURE:
+        draft.updatePostLoading = false;
+        draft.updatePostError = action.error;
+        break;
+
       case REMOVE_POST_REQUEST:
         draft.removePostLoading = true;
         draft.removePostDone = false;
@@ -238,21 +261,6 @@ const reducer = (state = initialState, action) =>
         draft.addCommentLoading = false;
         draft.addCommentDone = true;
         break;
-      //   //action.data.content, postId, userId 가 들어있겟지
-      //   //불변성의 핵심은 바뀌는것만 새로운 객체로 만들고 나머지느 ㄴ객체는 참조를 유지함
-      //   //그래야 바뀌는것만 바뀌고 안바뀌는거는 참조가 계속 유지되서 메모리를 절약 하는거임
-      //   const postIndex = state.mainPosts.findIndex((v) => v.id === action.data.postId);
-      //   const post = { ...state.mainPosts[postIndex] };
-      //   post.Comments = [dummyComment(action.data.content), ...post.Comments];
-      //   const mainPosts = [...state.mainPosts];
-      //   mainPosts[postIndex] = post;
-      //   return {
-      //     ...state,
-      //     mainPosts,
-      //     addCommentLoading: false,
-      //     addCommentDone: true,
-      //   }; //dummyPost가 앞에 있어야 함 뒤에 있으면 게시글 맨 아래에 추가됨
-      // }
       case ADD_COMMENT_FAILURE:
         draft.addCommentLoading = false;
         draft.addCommentError = action.error;
@@ -263,10 +271,3 @@ const reducer = (state = initialState, action) =>
   });
 
 export default reducer;
-
-// const ADD_POST = "ADD_POST";
-// //이렇게 빼주면 좋은점이 밑에 ,case ADD_POST처럼 const값을 재활용 할수 있음
-// //그리고 변수 선언으로 인해 오타 방지
-// export const addPost = {
-//   type: ADD_POST,
-// };
