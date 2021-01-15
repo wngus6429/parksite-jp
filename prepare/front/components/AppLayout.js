@@ -17,6 +17,11 @@ const SearchInput = styled(Input.Search)`
 
 //gutter 같은거 넣어서 밑에 작은 스크롤이 생겨서 없앨려고
 const Global = createGlobalStyle`
+body {
+background: url("https://user-images.githubusercontent.com/55697824/104767331-485ed580-57af-11eb-8573-3942b09090bb.jpg");
+background-size: cover;
+background-repeat: no-repeat;
+}
 .ant-row{
   margin-left:0 !important;
   margin-right:0 !important;
