@@ -1,7 +1,7 @@
 import React, { useCallback, useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import Link from "next/link";
-import { Input } from "antd";
+import { Button, Input } from "antd";
 import { useSelector } from "react-redux";
 
 const { TextArea } = Input;
