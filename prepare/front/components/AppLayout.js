@@ -85,7 +85,7 @@ const AppLayout = ({ children }) => {
         </Col>
         <Col xs={24} md={6}>
           <a href="https://wngus6429.github.io/NewPortFolio/" target="_blank" rel="noopener noreferrer">
-            <div style={{ fontSize: "80px", textAlign: "center", color: "red", backgroundColor: "yellow" }}>
+            <div style={{ fontSize: "50px", textAlign: "center", color: "red", backgroundColor: "yellow" }}>
               ポートフォリオ
             </div>
           </a>
