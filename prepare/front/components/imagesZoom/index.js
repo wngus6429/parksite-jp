@@ -26,7 +26,7 @@ const ImagesZoom = ({ images, onClose }) => {
             {images.map((v) => (
               <ImgWrapper key={v.src}>
                 <img
-                  style={{ maxHeight: "700px" }}
+                  style={{ maxHeight: "600px" }}
                   src={`${v.src.replace(/\/thumb\//, "/original/")}`}
                   alt={v.src}
                 />

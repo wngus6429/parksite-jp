@@ -14,6 +14,7 @@ const UserProfile = () => {
 
   return (
     <Card
+      style={{ backgroundColor: "#DEFEF9" }}
       actions={[
         <div key="twit">
           <Link href={`/user/${me.id}`}>
