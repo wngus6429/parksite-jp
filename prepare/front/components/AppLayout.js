@@ -18,9 +18,9 @@ const SearchInput = styled(Input.Search)`
 //gutter 같은거 넣어서 밑에 작은 스크롤이 생겨서 없앨려고
 const Global = createGlobalStyle`
 body {
-background: url("https://user-images.githubusercontent.com/55697824/104767331-485ed580-57af-11eb-8573-3942b09090bb.jpg");
+background: url("https://user-images.githubusercontent.com/55697824/120098894-6b44c180-c173-11eb-9c13-f89e79bdf6f3.jpg");
 background-size: cover;
-background-repeat: no-repeat;
+background-repeat: repeat;
 }
 .ant-row{
   margin-left:0 !important;
@@ -70,9 +70,7 @@ const AppLayout = ({ children }) => {
         </Col>
         <Col xs={24} md={6}>
           <a href="https://wngus6429.github.io/NewPortFolio/" target="_blank" rel="noopener noreferrer">
-            <div style={{ fontSize: "50px", textAlign: "center", color: "red", backgroundColor: "yellow" }}>
-              ポートフォリオ
-            </div>
+            <div style={{ fontSize: "50px", textAlign: "center", color: "red", backgroundColor: "yellow" }}>ポートフォリオ</div>
           </a>
         </Col>
       </Row>
