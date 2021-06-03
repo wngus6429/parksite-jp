@@ -89,7 +89,7 @@ const AppLayout = ({ children }) => {
 };
 
 AppLayout.propTypes = {
-  children: Proptypes.node.isRequired, //리액트의 node
+  children: Proptypes.node.isRequired,
 };
 
 export default AppLayout;
