@@ -10,7 +10,8 @@ import { useSelector } from "react-redux"; //리액트랑 리덕스 연결
 import Router from "next/router"; //프로그래밍적으로 주소를 옮길떄는 router사용
 import { createGlobalStyle } from "styled-components";
 import useinput from "../hooks/useinput";
-
+import { Card } from "antd";
+const { Meta } = Card;
 const SearchInput = styled(Input.Search)`
   vertical-align: middle;
 `;
@@ -18,7 +19,7 @@ const SearchInput = styled(Input.Search)`
 //gutter 같은거 넣어서 밑에 작은 스크롤이 생겨서 없앨려고
 const Global = createGlobalStyle`
 body {
-background: url("https://user-images.githubusercontent.com/55697824/120098894-6b44c180-c173-11eb-9c13-f89e79bdf6f3.jpg");
+background: url("./back2.jpg");
 background-size: cover;
 background-repeat: repeat;
 }
@@ -64,13 +65,22 @@ const AppLayout = ({ children }) => {
       <Row gutter={8}>
         <Col xs={24} md={6}>
           {me ? <UserProfile /> : <LoginForm />}
+          <img src="./react.jpg" width="100%" height="200px" />
+          <img src="./next.png" width="100%" height="200px" />
+          <img src="./secal.png" width="100%" height="200px" />
+          <img src="./AWS.png" width="100%" height="200px" />
         </Col>
         <Col xs={24} md={12}>
           {children}
         </Col>
         <Col xs={24} md={6}>
           <a href="https://wngus6429.github.io/NewPortFolio/" target="_blank" rel="noopener noreferrer">
-            <div style={{ fontSize: "50px", textAlign: "center", color: "red", backgroundColor: "yellow" }}>ポートフォリオ</div>
+            <Card hoverable style={{ alignItems: "stretch" }} cover={<img alt="example" src="./study.jpg" />}>
+              <Meta title="Park PortFolio" description="https://wngus6429.github.io/NewPortFolio/" />
+            </Card>
+          </a>
+          <a href="https://github.com/wngus6429/parksite-jp" target="_blank" rel="noopener noreferrer">
+            <img src="./git.jpg" width="100%" height="200px" />
           </a>
         </Col>
       </Row>
