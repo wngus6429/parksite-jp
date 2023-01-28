@@ -1,4 +1,4 @@
-import { all, fork, delay, put, takeLatest, call } from "redux-saga/effects";
+import { all, fork, delay, put, takeLatest, call } from 'redux-saga/effects';
 //여기안에 delay, debounce, throttle, takeLastest, takeEvery, takeMaybe 같은것도 있음
 //지금 적은것들이 사가의 effect라 불림
 import {
@@ -35,8 +35,8 @@ import {
   REMOVE_FOLLOWER_REQUEST,
   REMOVE_FOLLOWER_SUCCESS,
   REMOVE_FOLLOWER_FAILURE,
-} from "../reducers/user";
-import axios from "axios";
+} from '../reducers/user';
+import axios from 'axios';
 //이거는 컴바인 리듀스 같은게 필요 없음.
 
 function removeFollowerAPI(data) {
@@ -59,7 +59,7 @@ function* removeFollower(action) {
 }
 
 function loadFollowersAPI(data) {
-  return axios.get("/user/followers", data);
+  return axios.get('/user/followers', data);
 }
 function* loadFollowers(action) {
   try {
@@ -78,7 +78,7 @@ function* loadFollowers(action) {
 }
 
 function loadFollowingsAPI(data) {
-  return axios.get("/user/followings", data);
+  return axios.get('/user/followings', data);
 }
 function* loadFollowings(action) {
   try {
@@ -97,7 +97,7 @@ function* loadFollowings(action) {
 }
 
 function changeNicknameAPI(data) {
-  return axios.patch("/user/nickname", { nickname: data });
+  return axios.patch('/user/nickname', { nickname: data });
 }
 function* changeNickname(action) {
   try {
@@ -115,7 +115,7 @@ function* changeNickname(action) {
 }
 
 function loadMyInfoAPI() {
-  return axios.get("/user");
+  return axios.get('/user');
 }
 function* loadMyInfo() {
   try {
@@ -156,7 +156,7 @@ function* loadUser(action) {
 
 //logInAPI이거는 generator안임. * 붙이면 안됨
 function logInAPI(data) {
-  return axios.post("/user/login", data); //로그인 요청 함
+  return axios.post('/user/login', data); //로그인 요청 함
 }
 
 //항상 effect 앞에는 yield(일드)를 붙여준다
@@ -170,7 +170,7 @@ function logInAPI(data) {
 //굳이 yield를 안 붙여도되지만 붙이는 이유가 테스트 때문, 동작 보장이 되는가?
 function* logIn(action) {
   try {
-    console.log("Saga User.js");
+    console.log('Saga User.js');
     const result = yield call(logInAPI, action.data); //이렇게 결과값 요청후 받음
     // yield delay(1000); //서버 만들어 질때까지 delay로 비동기 효과 주기
     yield put({
@@ -195,7 +195,7 @@ function* logIn(action) {
 //takeLatest 는 마지막에 클릭한거. (로딩 도중 기준) 여러번 클릭 방지, 첫번째꺼는 takeLeading
 
 function logOutAPI() {
-  return axios.post("/user/logout"); //로그인 요청 함
+  return axios.post('/user/logout', { withCredentials: true }); //로그인 요청 함
 }
 function* logOut() {
   try {
@@ -213,7 +213,7 @@ function* logOut() {
 }
 
 function signUpAPI(data) {
-  return axios.post("/user", data); //로그인 요청 함
+  return axios.post('/user', data); //로그인 요청 함
 } //data안에 Email, Password, NickName 가 들어있다. signup.js 참조
 //get이랑 delete요청은 데이터를 못 보내지만, post,put,patch는 넘길수 있다. 두번째로
 function* signUp(action) {
