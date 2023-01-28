@@ -156,7 +156,7 @@ function* loadUser(action) {
 
 //logInAPI이거는 generator안임. * 붙이면 안됨
 function logInAPI(data) {
-  return axios.post('/user/login', data, { withCredentials: true }); //로그인 요청 함
+  return axios.post('/user/login', data); //로그인 요청 함
 }
 
 //항상 effect 앞에는 yield(일드)를 붙여준다
