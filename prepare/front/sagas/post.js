@@ -1,5 +1,5 @@
-import { all, fork, put, takeLatest, throttle, call } from "redux-saga/effects";
-import axios from "axios";
+import { all, fork, put, takeLatest, throttle, call } from 'redux-saga/effects';
+import axios from 'axios';
 import {
   LIKE_POST_REQUEST,
   LIKE_POST_SUCCESS,
@@ -37,8 +37,8 @@ import {
   RETWEET_REQUEST,
   RETWEET_SUCCESS,
   RETWEET_FAILURE,
-} from "../reducers/post";
-import { ADD_POST_TO_ME, REMOVE_POST_OF_ME } from "../reducers/user";
+} from '../reducers/post';
+import { ADD_POST_TO_ME, REMOVE_POST_OF_ME } from '../reducers/user';
 
 function retWeetAPI(data) {
   return axios.post(`/post/${data}/retweet`);
@@ -60,7 +60,7 @@ function* retWeet(action) {
 }
 
 function uploadImagesAPI(data) {
-  return axios.post("/post/images", data); //{name:data} 이렇게 하면 json이 되어버린다
+  return axios.post('/post/images', data); //{name:data} 이렇게 하면 json이 되어버린다
 }
 function* uploadImages(action) {
   try {
@@ -130,7 +130,7 @@ function* loadPost(action) {
     console.error(err);
     yield put({
       type: LOAD_POST_FAILURE,
-      data: err.response.data,
+      error: err.response.data,
     });
   }
 }
@@ -149,7 +149,7 @@ function* loadUserPosts(action) {
     console.error(err);
     yield put({
       type: LOAD_USER_POSTS_FAILURE,
-      data: err.response.data,
+      error: err.response.data,
     });
   }
 }
@@ -169,7 +169,7 @@ function* loadHashtagPosts(action) {
     console.error(err);
     yield put({
       type: LOAD_HASHTAG_POSTS_FAILURE,
-      data: err.response.data,
+      error: err.response.data,
     });
   }
 }
@@ -194,7 +194,7 @@ function* loadPosts(action) {
 }
 
 function addPostAPI(data) {
-  return axios.post("/post", data); //form데이터는 {} 이런걸로 감싸면 안됨
+  return axios.post('/post', data); //form데이터는 {} 이런걸로 감싸면 안됨
   //뒷부분을 저렇게 해줘야 req.body 안에 들어간다
 }
 function* addPost(action) {

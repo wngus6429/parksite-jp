@@ -1,31 +1,31 @@
-const express = require("express");
-const multer = require("multer");
-const path = require("path"); //node에서 제공
-const fs = require("fs"); //파일시스템을 조작할수 있는
-const { Post, Image, Comment, User, Hashtag } = require("../models");
-const { isLoggedIn } = require("./middlewares");
+const express = require('express');
+const multer = require('multer');
+const path = require('path'); //node에서 제공
+const fs = require('fs'); //파일시스템을 조작할수 있는
+const { Post, Image, Comment, User, Hashtag } = require('../models');
+const { isLoggedIn } = require('./middlewares');
 const router = express.Router();
-const multerS3 = require("multer-s3");
-const AWS = require("aws-sdk");
+const multerS3 = require('multer-s3');
+const AWS = require('aws-sdk');
 //params는 변수를 담는다
 //게시글 작성
 
 try {
-  fs.accessSync("uploads");
+  fs.accessSync('uploads');
 } catch (error) {
-  console.log("uplaods folderがないので、生成します。");
-  fs.mkdirSync("uploads");
+  console.log('uplaods folderがないので、生成します。');
+  fs.mkdirSync('uploads');
 }
 
 AWS.config.update({
   accessKeyId: process.env.S3_ACCESS_KEY_ID,
   secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
-  region: "ap-northeast-1",
+  region: 'ap-northeast-1',
 });
 const upload = multer({
   storage: multerS3({
     s3: new AWS.S3(),
-    bucket: "parkbird-s3",
+    bucket: 'parkbird-s3',
     key(req, file, cb) {
       cb(null, `original/${Date.now()}_${path.basename(file.originalname)}`);
     },
@@ -33,7 +33,7 @@ const upload = multer({
   limits: { fileSize: 15 * 1024 * 1024 }, //15MB
 }); //대형 서비스되면 프론트에서 바로 클라우드로 가는 방법 써야함
 
-router.post("/", isLoggedIn, upload.none(), async (req, res, next) => {
+router.post('/', isLoggedIn, upload.none(), async (req, res, next) => {
   try {
     const hashtags = req.body.content.match(/#[^\s#]+/g);
     const post = await Post.create({
@@ -66,33 +66,34 @@ router.post("/", isLoggedIn, upload.none(), async (req, res, next) => {
         await post.addImages(image);
       }
     }
+    // 그냥 저장하면 위에꺼 밖에 안 들어 있으니까 밑에걸로 추가해줌.
     const fullPost = await Post.findOne({
       where: { id: post.id },
       include: [
         {
-          model: Image,
+          model: Image, // 게시글에 달린 이미지
         },
         {
-          model: Comment,
+          model: Comment, // 게시글에 달린 코멘트
           include: [
             {
               model: User, //댓글 작성자
-              attributes: ["id", "nickname"],
+              attributes: ['id', 'nickname'],
             },
           ],
         },
         {
           model: User, //게시글 작성자
-          attributes: ["id", "nickname"],
+          attributes: ['id', 'nickname'],
         },
         {
           model: User, //좋아요 누른사람
-          as: "Likers", //이렇게 해야 구별이됨
-          attributes: ["id"],
+          as: 'Likers', //이렇게 해야 구별이됨
+          attributes: ['id'],
         },
       ],
     });
-    console.log("게시글작성", fullPost);
+    console.log('게시글작성', fullPost);
     res.status(201).json(fullPost); //이렇게 프론트로 돌려주고 그러면 saga, addpost 의 const result 이쪽에 들어감
   } catch (error) {
     console.error(error);
@@ -102,33 +103,33 @@ router.post("/", isLoggedIn, upload.none(), async (req, res, next) => {
 
 //Post /post/images , array쓰는 이유는 여러장, single 쓰면 한장, 텍스트면 none
 //field는 이미지 올리는 칸이 2개 이상일 경우
-router.post("/images", isLoggedIn, upload.array("image"), (req, res, next) => {
+router.post('/images', isLoggedIn, upload.array('image'), (req, res, next) => {
   //여기는 이미지 업로드 후에 실행된다
   console.log(req.files);
-  res.json(req.files.map((v) => v.location.replace(/\/original\//, "/thumb/")));
+  res.json(req.files.map((v) => v.location.replace(/\/original\//, '/thumb/')));
   //오리지널 폴더가 있으면 thumb, 그래야 원본이 아닌 리사이징된게 프론트로 가지
 });
 
 //SinglePost //GET /post/1   , 1번게시글 가져오기
-router.get("/:postId", async (req, res, next) => {
+router.get('/:postId', async (req, res, next) => {
   try {
     const post = await Post.findOne({
       where: { id: req.params.postId },
     });
     if (!post) {
       //post가 존재하지 않으면
-      return res.status(404).send("存在しない投稿です。");
+      return res.status(404).send('存在しない投稿です。');
     }
     const fullPost = await Post.findOne({
       where: { id: post.id },
       include: [
         {
           model: Post,
-          as: "Retweet",
+          as: 'Retweet',
           include: [
             {
               model: User,
-              attributes: ["id", "nickname"],
+              attributes: ['id', 'nickname'],
             },
             {
               model: Image,
@@ -137,19 +138,19 @@ router.get("/:postId", async (req, res, next) => {
         },
         {
           model: User,
-          attributes: ["id", "nickname"],
+          attributes: ['id', 'nickname'],
         },
         {
           model: User,
-          as: "Likers",
-          attributes: ["id", "nickname"],
+          as: 'Likers',
+          attributes: ['id', 'nickname'],
         },
         {
           model: Image,
         },
         {
           model: Comment,
-          include: [{ model: User, attributes: ["id", "nickname"] }],
+          include: [{ model: User, attributes: ['id', 'nickname'] }],
         },
       ],
     });
@@ -161,23 +162,23 @@ router.get("/:postId", async (req, res, next) => {
 });
 
 //리트윗 //POST, /post/1/retweet
-router.post("/:postId/retweet", isLoggedIn, async (req, res, next) => {
+router.post('/:postId/retweet', isLoggedIn, async (req, res, next) => {
   try {
     const post = await Post.findOne({
       where: { id: req.params.postId }, //위에가 :postId니까
       include: [
         {
           model: Post,
-          as: "Retweet",
+          as: 'Retweet',
         },
       ],
     });
     if (!post) {
       //post가 존재하지 않으면
-      return res.status(403).send("存在しない投稿です。");
+      return res.status(403).send('存在しない投稿です。');
     } //자기개시글을 직접 리트윗하는것. 자기게시글을 남이 리트윗한것을 자기가 다시 리트윗 하는걸 막을거임
     if (req.user.id === post.UserId || (post.Retweet && post.Retweet.UserId === req.user.id)) {
-      return res.status(403).send("自分が投稿したのは、Retweetできません。");
+      return res.status(403).send('自分が投稿したのは、Retweetできません。');
     } //게시글이 리트윗한건지 찾아보고 그거면 리트윗아이디를 쓰고 아니면 null인 애들은 post.id를 쓰고
     const retweetTargetId = post.RetweetId || post.id; //남의게시글을 다른 사람이 리트윗한거를 그걸 다시 리트윗 한거
     const exPost = await Post.findOne({
@@ -187,23 +188,23 @@ router.post("/:postId/retweet", isLoggedIn, async (req, res, next) => {
       },
     });
     if (exPost) {
-      return res.status(403).send("すでにRetweetされています。");
+      return res.status(403).send('すでにRetweetされています。');
     }
     const retweet = await Post.create({
       UserId: req.user.id,
       RetweetId: retweetTargetId,
-      content: "retweet", //post모델 가보면 allowNull false되어있어서 반드시 넣어줘야함
+      content: 'retweet', //post모델 가보면 allowNull false되어있어서 반드시 넣어줘야함
     });
     const retweetWithPrevPost = await Post.findOne({
       where: { id: retweet.id },
       include: [
         {
           model: Post,
-          as: "Retweet",
+          as: 'Retweet',
           include: [
             {
               model: User,
-              attributes: ["id", "nickname"],
+              attributes: ['id', 'nickname'],
             },
             {
               model: Image,
@@ -212,14 +213,19 @@ router.post("/:postId/retweet", isLoggedIn, async (req, res, next) => {
         },
         {
           model: User,
-          attributes: ["id", "nickname"],
+          attributes: ['id', 'nickname'],
+        },
+        {
+          model: User, // 좋아요 누른 사람
+          as: 'Likers',
+          attributes: ['id'],
         },
         {
           model: Image,
         },
         {
           model: Comment,
-          include: [{ model: User, attributes: ["id", "nickname"] }],
+          include: [{ model: User, attributes: ['id', 'nickname'] }],
         },
       ],
     });
@@ -231,14 +237,14 @@ router.post("/:postId/retweet", isLoggedIn, async (req, res, next) => {
 });
 
 //동적 주소를 파라미터라 한다  //POST /post/comment
-router.post("/:postId/comment", isLoggedIn, async (req, res, next) => {
+router.post('/:postId/comment', isLoggedIn, async (req, res, next) => {
   try {
     const post = await Post.findOne({
       where: { id: req.params.postId }, //위에가 :postId니까
     });
     if (!post) {
       //post가 존재하지 않으면
-      return res.status(403).send("存在しない投稿です。");
+      return res.status(403).send('存在しない投稿です。');
     }
     const comment = await Comment.create({
       content: req.body.content,
@@ -250,7 +256,7 @@ router.post("/:postId/comment", isLoggedIn, async (req, res, next) => {
       include: [
         {
           model: User,
-          attributes: ["id", "nickname"],
+          attributes: ['id', 'nickname'],
         },
       ],
     });
@@ -262,12 +268,12 @@ router.post("/:postId/comment", isLoggedIn, async (req, res, next) => {
 });
 
 //PATCH /post/1/like
-router.patch("/:postId/like", isLoggedIn, async (req, res, next) => {
+router.patch('/:postId/like', isLoggedIn, async (req, res, next) => {
   try {
     const post = await Post.findOne({ where: { id: req.params.postId } });
     //post 있는지 검사를 해야지
     if (!post) {
-      return res.status(403).send("投稿が存在していません。");
+      return res.status(403).send('投稿が存在していません。');
     }
     //포스트가 있따면
     await post.addLikers(req.user.id);
@@ -279,12 +285,12 @@ router.patch("/:postId/like", isLoggedIn, async (req, res, next) => {
 });
 
 //DELETE /post/1/like
-router.delete("/:postId/like", isLoggedIn, async (req, res, next) => {
+router.delete('/:postId/like', isLoggedIn, async (req, res, next) => {
   try {
     const post = await Post.findOne({ where: { id: req.params.postId } });
     //post 있는지 검사를 해야지
     if (!post) {
-      return res.status(403).send("投稿が存在していません。");
+      return res.status(403).send('投稿が存在していません。');
     }
     await post.removeLikers(req.user.id); //여기다가 그냥 SQL 적어도됨. mysql2 확인
     res.json({ PostId: post.id, UserId: req.user.id });
@@ -294,7 +300,7 @@ router.delete("/:postId/like", isLoggedIn, async (req, res, next) => {
   }
 });
 //Patch /post
-router.patch("/:postId", isLoggedIn, async (req, res, next) => {
+router.patch('/:postId', isLoggedIn, async (req, res, next) => {
   // PATCH /post/10
   const hashtags = req.body.content.match(/#[^\s#]+/g);
   try {
@@ -327,7 +333,7 @@ router.patch("/:postId", isLoggedIn, async (req, res, next) => {
   }
 });
 //DELETE /post
-router.delete("/:postId", isLoggedIn, async (req, res, next) => {
+router.delete('/:postId', isLoggedIn, async (req, res, next) => {
   try {
     await Post.destroy({
       //시퀄라이즈에서는 제거할때 destory를 쓴다 , 남이 삭제 못하게 2개로
